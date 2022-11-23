@@ -35,10 +35,3 @@ exports.initialize = ()=>{
                 reject("no results returned");
             });
         }
-       
-
-
-
-
-    
-    

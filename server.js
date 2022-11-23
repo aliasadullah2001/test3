@@ -1,36 +1,78 @@
+
+
+//https://dull-pear-gharial-gear.cyclic.app/
 var HTTP_PORT = process.env.PORT || 8080;
+var exphbs = require("express-handlebars");
+var bodyParser = require("body-parser");
 var express = require("express");
 var app = express();
 var path = require("path");
 var data= require('./test2_moduleB');
-function onHttpStart(){
-    console.log("Express http server listening on: " + HTTP_PORT);
+app.set('view engine', '.hbs');
+app.use(express.static('public'));
+app.engine('.hbs', exphbs.engine({extname : ".hbs",  
+helpers: {
+
+    navLink : function(url, options){ 
+    
+            return '<li' + ((url == app.locals.activeRoute) ? ' class="active" ' : '') + '><a href="' + url + '">' + options.fn(this) + '</a></li>';},
+          
+    equal   : function (lvalue, rvalue, options) {
+
+              if (arguments.length < 3)
+
+              throw new Error("Handlebars Helper equal needs 2 parameters");
+              
+              if (lvalue != rvalue) {
+                return options.inverse(this);} 
+              
+              else {
+                
+                return options.fn(this);}
+
+    }
 }
 
-app.get("/", (req, res) => {
-    let resText = "<h2>Declaration(text size in heading 2)</h2> <br>";
-    resText += "<a> The rest text is displayed in paragraph as shown in screenshot. </a><br><br>";
-    resText += "<a> I acknowledge the College's Academic intgrity Policy - and my own integrity - remain in effect whether my work is <br> done remotely or onsite Any test or assignment is an act of trust between me and my instructor, and especially with <br> my classmates... even when no one is wathcing. I declare I will not break that trust.</a> <br><br>";
-    resText += "<a> Name:</a><b><mark> Ali Asadullah</b></mark><br> <br>";
-    resText += "<a> Student Number:</a><mark><b>174606210</b></mark><br> <br>";
-    resText += "<a href = './CPA'> Click to visit CPA Students </a><br> <br>";
-    resText += "<a href = './highGPA'> Click to see who has the highest GPA </a><br> <br>";
+})) 
+app.set('view engine', '.hbs');
+app.use(express.static('public'));
 
-    res.send(resText);
+function onHttpStart() {
+    console.log("Express http server listening on: " + HTTP_PORT);
+  }
+  app.use(function(req,res,next){ 
+    let route = req.baseUrl + req.path;
+    app.locals.activeRoute = (route == "/") ? "/" : route.replace(/\/$/, "");
+    next();
+  
+  });
+
+  app.use(bodyParser.urlencoded({extended:true}));
+  // setup a 'route' to listen on the default url path
+
+  app.get("/", (req, res) => {
+      res.render('home');
+  }
+  
+,
+
+app.get("/highGPA", (req, res)=>{
+  data_prep.highGPA().then((data)=>{
+      let resText = `<h2> Highest GPA: </h2>
+      <p> Student ID: ${data.studId} </p>
+      <p> Name:  ${data.name} </p>
+      <p> Program: ${data.program} </p>
+      <p> GPA: ${data.gpa} </p> `;
+      res.send(resText);
+  });
+
 }
 ,
 app.get("/CPA",function (req,res) {
-    data.getCPA()
-    .then((data) => res.json(data))
-    .catch((err)=> res.json({"message": err}))
-    }  
-,
-app.get("/highGPA",function (req,res) {
-    data.highGPA()
-    .then((data) => res.json(data))
-    .catch((err)=> res.json({"message": err}))
-    }  
-
+  data.getCPA()
+  .then((data) => res.json(data))
+  .catch((err)=> res.json({"message": err}))
+  } 
 
 )));
 app.use((req, res) => {
@@ -45,3 +87,4 @@ app.use((req, res) => {
   console.log("error")
 })
   
+
