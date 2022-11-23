@@ -1,0 +1,43 @@
+<div class="container">
+      <div class="row">
+    <div class = "col-md-12">
+
+        <h2> Student List </h2>
+        <hr>
+                <div class = "table-responsive">
+                    <table class = "table">
+                            <thead>
+                                <tr> 
+                                    <th> student id </th>
+                                    <th> Name </th>
+                                    <th> program </th>
+                                    <th> gpa </th>
+                                  
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                               
+                                
+                                    {{#each data}}
+                                        <tr>   
+
+                                            <td>{{this.studId}}</td>
+                                            <td><a href = "/students/{{this.name}}">{{this.program}} {{this.gpa}}</a></td>
+                                        
+
+                                        </tr>  
+                                    {{/each}}
+                              
+                            
+
+
+                            </tbody>
+                    </table>
+                </div>
+                 {{#unless data}}
+                    <div class="col-md-12 text-center"><strong>{{error}}</strong></div>
+                {{/unless}}
+        </div>
+         
+                   

@@ -24,14 +24,23 @@ exports.initialize = ()=>{
                 reject("no results returned");
             });
         }
-    exports.highGPA = ()=>{
-            return new Promise((resolve , reject)=>{
-                var highest;
-               for(var i =0; i<arr.length ; i++)
-               if (highest == null || parseInt(arr[i][prop]) > parseInt(highest[prop]))
-               highest =arr[i];
-               resolve(students);
-               
-                reject("no results returned");
-            });
-        }
+        exports.highGPA = ()=>{
+            return new Promise((resolve, reject)=>{
+                let high = 0;
+                let highStudent;
+                
+                for (let i=0; i<students.length; i++)
+                {
+                    //console.log(students[i].gpa, high);
+                    if (students[i].gpa > high)
+                    {
+                        high = students[i].gpa;
+                        highStudent = students[i];
+                    }
+                }
+                (highStudent) ? resolve(highStudent): reject("Failed finding student with highest GPA");
+            }); 
+
+        };
+
+       
